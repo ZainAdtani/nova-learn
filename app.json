@@ -3,8 +3,9 @@
     "name": "Supernova",
     "slug": "supernova-app",
     "version": "0.1.0",
+    "scheme": "supernova",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "backgroundColor": "#0A0F1A",
     "icon": "./assets/icon.png",
     "splash": {
@@ -16,6 +17,9 @@
     },
     "assetBundlePatterns": [
       "**/*"
+    ],
+    "plugins": [
+      "expo-asset"
     ]
   }
 }

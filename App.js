@@ -1,35 +1,64 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView, Animated, Easing } from 'react-native';
-
-// ---- Supernova brand colors, from docs/DESIGN.md ----
-const COLORS = {
-  bg: '#0A0F1A',
-  surface: '#141B2E',
-  blue: '#447BBE',
-  fire: '#D97706',
-  sunset: '#DD5013',
-  pale: '#E9E4A6',
-  white: '#FFFFFF',
-  muted: '#8A93A6',
-};
+import { useState } from 'react';
+import { View } from 'react-native';
+import { useStyles } from './styles/appStyles';
+import { supabase } from './lib/supabase';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import { useStreak } from './hooks/useStreak';
+import { NavButton } from './components/NavButton';
+import { SaveStreakPrompt } from './components/SaveStreakPrompt';
+import { WelcomeScreen } from './screens/WelcomeScreen';
+import { NotifyScreen } from './screens/NotifyScreen';
+import { HomeScreen } from './screens/HomeScreen';
+import { TriviaScreen } from './screens/TriviaScreen';
+import { StreakScreen } from './screens/StreakScreen';
+import { PaywallScreen } from './screens/PaywallScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
 
 export default function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
+  const styles = useStyles();
+  const { scheme } = useTheme();
   const [screen, setScreen] = useState('welcome');
+  const [showSavePrompt, setShowSavePrompt] = useState(false);
+  const { streak, completeQuiz, claimGuestStreak } = useStreak();
   const isOnboarding = screen === 'welcome' || screen === 'notify';
+
+  const handleQuizDone = async () => {
+    const isFirstGuestQuiz = await completeQuiz();
+    setScreen('streak');
+    if (isFirstGuestQuiz) setShowSavePrompt(true);
+  };
+
+  const handleSignedIn = async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) await claimGuestStreak(data.session.user.id);
+    setShowSavePrompt(false);
+  };
 
   return (
     <View style={styles.app}>
-      <StatusBar style="light" />
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <View style={styles.screenArea}>
         {screen === 'welcome' && <WelcomeScreen onNext={() => setScreen('notify')} />}
         {screen === 'notify' && <NotifyScreen onNext={() => setScreen('home')} />}
-        {screen === 'home' && <HomeScreen onQuiz={() => setScreen('trivia')} streak={7} />}
+        {screen === 'home' && <HomeScreen onQuiz={() => setScreen('trivia')} streak={streak} />}
         {screen === 'trivia' && (
-          <TriviaScreen onDone={() => setScreen('streak')} onBack={() => setScreen('home')} />
+          <TriviaScreen onDone={handleQuizDone} onBack={() => setScreen('home')} />
         )}
-        {screen === 'streak' && <StreakScreen streak={7} onUpgrade={() => setScreen('paywall')} />}
+        {screen === 'streak' && <StreakScreen streak={streak} onUpgrade={() => setScreen('paywall')} />}
         {screen === 'paywall' && <PaywallScreen onClose={() => setScreen('home')} />}
+        {screen === 'settings' && <SettingsScreen onRequestSignIn={() => setShowSavePrompt(true)} />}
       </View>
 
       {!isOnboarding && (
@@ -38,257 +67,15 @@ export default function App() {
           <NavButton label="Quiz" emoji="⚡" active={screen === 'trivia'} onPress={() => setScreen('trivia')} />
           <NavButton label="Streak" emoji="🔥" active={screen === 'streak'} onPress={() => setScreen('streak')} />
           <NavButton label="Plus" emoji="👑" active={screen === 'paywall'} onPress={() => setScreen('paywall')} />
+          <NavButton label="Settings" emoji="⚙️" active={screen === 'settings'} onPress={() => setScreen('settings')} />
         </View>
       )}
+
+      <SaveStreakPrompt
+        visible={showSavePrompt}
+        onDismiss={() => setShowSavePrompt(false)}
+        onSignedIn={handleSignedIn}
+      />
     </View>
   );
 }
-
-function NavButton({ label, emoji, active, onPress }) {
-  return (
-    <Pressable style={styles.navButton} onPress={onPress}>
-      <Text style={[styles.navEmoji, active && { opacity: 1 }]}>{emoji}</Text>
-      <Text style={[styles.navLabel, active && styles.navLabelActive]}>{label}</Text>
-    </Pressable>
-  );
-}
-
-// ---------- Screens ----------
-
-function WelcomeScreen({ onNext }) {
-  return (
-    <View style={styles.center}>
-      <Text style={styles.logo}>✨</Text>
-      <Text style={styles.h1}>Supernova</Text>
-      <Text style={styles.tagline}>Tiny lessons, big universe.</Text>
-      <Pressable style={styles.primaryButton} onPress={onNext}>
-        <Text style={styles.primaryButtonText}>Get Started</Text>
-      </Pressable>
-    </View>
-  );
-}
-
-function NotifyScreen({ onNext }) {
-  return (
-    <View style={styles.center}>
-      <View style={styles.card}>
-        <Text style={styles.bellEmoji}>🔔</Text>
-        <Text style={styles.h2}>Want a daily reminder?</Text>
-        <Text style={styles.body}>
-          We'll nudge you once a day so you never miss your tiny lesson, or your streak.
-        </Text>
-        <Pressable style={styles.primaryButton} onPress={onNext}>
-          <Text style={styles.primaryButtonText}>Yes, remind me</Text>
-        </Pressable>
-        <Pressable style={styles.textButton} onPress={onNext}>
-          <Text style={styles.textButtonLabel}>Not now</Text>
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
-function HomeScreen({ onQuiz, streak }) {
-  // Simple animated fact card: the emoji spins slowly instead of using a real video.
-  const spin = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    Animated.loop(
-      Animated.timing(spin, {
-        toValue: 1,
-        duration: 9000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, []);
-  const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
-
-  return (
-    <ScrollView style={styles.screen} contentContainerStyle={{ padding: 20 }}>
-      <View style={styles.headerRow}>
-        <Text style={styles.h1Small}>Supernova</Text>
-        <View style={styles.streakPill}>
-          <Text style={styles.streakPillText}>🔥 {streak}</Text>
-        </View>
-      </View>
-
-      <Pressable style={styles.lessonCard} onPress={onQuiz}>
-        <View style={styles.lessonImage}>
-          <Animated.Text style={{ fontSize: 40, transform: [{ rotate }] }}>🪐</Animated.Text>
-        </View>
-        <Text style={styles.lessonLabel}>Today's fact card</Text>
-        <Text style={styles.lessonTitle}>Why Saturn's rings are slowly disappearing</Text>
-      </Pressable>
-
-      <Text style={styles.sectionLabel}>Coming up</Text>
-      <View style={styles.upcomingCard}>
-        <Text style={{ fontSize: 28 }}>🧬</Text>
-        <Text style={styles.upcomingText}>How evolution builds new species</Text>
-      </View>
-    </ScrollView>
-  );
-}
-
-const QUESTION = {
-  prompt: "What are Saturn's rings mostly made of?",
-  options: ['Ice and rock', 'Solid metal', 'Liquid gas', 'Sand'],
-  correct: 0,
-  explanation: "Saturn's rings are countless chunks of ice and rock, some as small as sand, some as big as a house.",
-};
-
-function TriviaScreen({ onDone, onBack }) {
-  const [selected, setSelected] = useState(null);
-
-  return (
-    <View style={styles.screen}>
-      <View style={{ padding: 20 }}>
-        <Pressable onPress={onBack}>
-          <Text style={styles.backLink}>← Back</Text>
-        </Pressable>
-        <Text style={styles.h2}>{QUESTION.prompt}</Text>
-
-        {QUESTION.options.map((opt, i) => {
-          const isSelected = selected === i;
-          const isCorrect = i === QUESTION.correct;
-          const showState = selected !== null;
-          return (
-            <Pressable
-              key={opt}
-              style={[
-                styles.optionButton,
-                showState && isCorrect && styles.optionCorrect,
-                showState && isSelected && !isCorrect && styles.optionWrong,
-              ]}
-              onPress={() => setSelected(i)}
-            >
-              <Text style={styles.optionText}>{opt}</Text>
-            </Pressable>
-          );
-        })}
-
-        {selected !== null && (
-          <>
-            <View style={styles.explanationBox}>
-              <Text style={styles.explanationText}>💡 {QUESTION.explanation}</Text>
-            </View>
-            <Pressable style={styles.primaryButton} onPress={onDone}>
-              <Text style={styles.primaryButtonText}>Continue</Text>
-            </Pressable>
-          </>
-        )}
-      </View>
-    </View>
-  );
-}
-
-function StreakScreen({ streak, onUpgrade }) {
-  return (
-    <View style={styles.center}>
-      <View style={styles.flameCircle}>
-        <Text style={{ fontSize: 56 }}>🔥</Text>
-      </View>
-      <Text style={styles.streakNumber}>{streak} days</Text>
-      <Text style={styles.body}>Keep it going. One tiny lesson a day.</Text>
-      <Pressable style={styles.secondaryButton} onPress={onUpgrade}>
-        <Text style={styles.secondaryButtonText}>See Plans</Text>
-      </Pressable>
-    </View>
-  );
-}
-
-function PaywallScreen({ onClose }) {
-  return (
-    <View style={styles.center}>
-      <View style={styles.card}>
-        <Text style={{ fontSize: 40 }}>👑</Text>
-        <Text style={styles.h2}>Go Premium</Text>
-        <Text style={styles.body}>Coming soon:</Text>
-        <Text style={styles.bullet}>• Deeper lesson library</Text>
-        <Text style={styles.bullet}>• Custom streak reminders</Text>
-        <Text style={styles.bullet}>• No ads, ever</Text>
-        <Pressable style={styles.textButton} onPress={onClose}>
-          <Text style={styles.textButtonLabel}>Maybe later</Text>
-        </Pressable>
-      </View>
-    </View>
-  );
-}
-
-// ---------- Styles ----------
-
-const styles = StyleSheet.create({
-  app: { flex: 1, backgroundColor: COLORS.bg },
-  screenArea: { flex: 1 },
-  screen: { flex: 1, backgroundColor: COLORS.bg },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
-
-  logo: { fontSize: 48, marginBottom: 12 },
-  h1: { fontSize: 40, fontWeight: 'bold', color: COLORS.white },
-  h1Small: { fontSize: 22, fontWeight: 'bold', color: COLORS.white },
-  h2: { fontSize: 20, fontWeight: 'bold', color: COLORS.white, marginTop: 12, marginBottom: 12 },
-  tagline: { fontSize: 16, color: COLORS.pale, marginTop: 8, marginBottom: 40 },
-  body: { fontSize: 14, color: COLORS.muted, textAlign: 'center', marginTop: 4, marginBottom: 16, lineHeight: 20 },
-  bullet: { fontSize: 14, color: COLORS.white, alignSelf: 'flex-start', marginBottom: 6 },
-
-  primaryButton: {
-    backgroundColor: COLORS.blue,
-    paddingVertical: 16,
-    paddingHorizontal: 40,
-    borderRadius: 16,
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  primaryButtonText: { color: COLORS.white, fontWeight: 'bold', fontSize: 16 },
-
-  secondaryButton: {
-    borderColor: COLORS.fire,
-    borderWidth: 2,
-    paddingVertical: 14,
-    paddingHorizontal: 36,
-    borderRadius: 16,
-  },
-  secondaryButtonText: { color: COLORS.fire, fontWeight: 'bold', fontSize: 15 },
-
-  textButton: { marginTop: 12, paddingVertical: 8 },
-  textButtonLabel: { color: COLORS.muted, fontSize: 14 },
-
-  card: {
-    backgroundColor: COLORS.surface,
-    borderRadius: 24,
-    padding: 24,
-    alignItems: 'center',
-    width: '100%',
-  },
-  bellEmoji: { fontSize: 32, marginBottom: 8 },
-
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  streakPill: { backgroundColor: 'rgba(217,119,6,0.15)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
-  streakPillText: { color: COLORS.fire, fontWeight: 'bold' },
-
-  lessonCard: { backgroundColor: COLORS.surface, borderRadius: 20, padding: 16, marginBottom: 24 },
-  lessonImage: { height: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(68,123,190,0.15)', borderRadius: 14, marginBottom: 12 },
-  lessonLabel: { color: COLORS.blue, fontSize: 12, fontWeight: 'bold' },
-  lessonTitle: { color: COLORS.white, fontSize: 16, fontWeight: 'bold', marginTop: 4 },
-
-  sectionLabel: { color: COLORS.muted, fontSize: 12, fontWeight: 'bold', marginBottom: 10, textTransform: 'uppercase' },
-  upcomingCard: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: COLORS.surface, borderRadius: 16, padding: 14 },
-  upcomingText: { color: COLORS.white, fontSize: 14, flexShrink: 1 },
-
-  backLink: { color: COLORS.muted, marginBottom: 12 },
-  optionButton: { backgroundColor: COLORS.surface, borderRadius: 14, padding: 16, marginBottom: 10 },
-  optionText: { color: COLORS.white, fontSize: 15 },
-  optionCorrect: { backgroundColor: 'rgba(76,175,80,0.25)', borderColor: '#4CAF50', borderWidth: 1 },
-  optionWrong: { backgroundColor: 'rgba(244,67,54,0.2)', borderColor: '#F44336', borderWidth: 1 },
-  explanationBox: { backgroundColor: 'rgba(233,228,166,0.1)', borderRadius: 14, padding: 14, marginTop: 4, marginBottom: 12 },
-  explanationText: { color: COLORS.pale, fontSize: 13, lineHeight: 19 },
-
-  flameCircle: { width: 140, height: 140, borderRadius: 70, borderWidth: 4, borderColor: 'rgba(217,119,6,0.3)', backgroundColor: 'rgba(217,119,6,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
-  streakNumber: { fontSize: 34, fontWeight: 'bold', color: COLORS.white, marginBottom: 4 },
-
-  nav: { flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 12, paddingBottom: 24, backgroundColor: COLORS.surface, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
-  navButton: { alignItems: 'center' },
-  navEmoji: { fontSize: 20, opacity: 0.5 },
-  navLabel: { fontSize: 11, color: COLORS.muted, marginTop: 2 },
-  navLabelActive: { color: COLORS.white, fontWeight: 'bold' },
-});

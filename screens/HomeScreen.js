@@ -1,9 +1,13 @@
 import { useRef, useEffect } from 'react';
 import { Text, View, Pressable, ScrollView, Animated, Easing } from 'react-native';
 import { useStyles } from '../styles/appStyles';
+import { getTodayLesson, getTomorrowLesson } from '../lib/lessons';
 
 export function HomeScreen({ onQuiz, streak }) {
   const styles = useStyles();
+  const today = getTodayLesson();
+  const tomorrow = getTomorrowLesson();
+
   // Simple animated fact card: the emoji spins slowly instead of using a real video.
   const spin = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -29,16 +33,16 @@ export function HomeScreen({ onQuiz, streak }) {
 
       <Pressable style={styles.lessonCard} onPress={onQuiz}>
         <View style={styles.lessonImage}>
-          <Animated.Text style={{ fontSize: 40, transform: [{ rotate }] }}>🪐</Animated.Text>
+          <Animated.Text style={{ fontSize: 40, transform: [{ rotate }] }}>{today.emoji}</Animated.Text>
         </View>
         <Text style={styles.lessonLabel}>Today's fact card</Text>
-        <Text style={styles.lessonTitle}>Why Saturn's rings are slowly disappearing</Text>
+        <Text style={styles.lessonTitle}>{today.teaser}</Text>
       </Pressable>
 
       <Text style={styles.sectionLabel}>Coming up</Text>
       <View style={styles.upcomingCard}>
-        <Text style={{ fontSize: 28 }}>🧬</Text>
-        <Text style={styles.upcomingText}>How evolution builds new species</Text>
+        <Text style={{ fontSize: 28 }}>{tomorrow.emoji}</Text>
+        <Text style={styles.upcomingText}>{tomorrow.teaser}</Text>
       </View>
     </ScrollView>
   );

@@ -13,7 +13,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.adtaniedu.supernova"
+      "bundleIdentifier": "com.adtaniedu.supernova",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "assetBundlePatterns": [
       "**/*"

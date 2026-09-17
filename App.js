@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { StyleSheet, Text, View, Pressable, ScrollView } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
+import { StyleSheet, Text, View, Pressable, ScrollView, Animated, Easing } from 'react-native';
 
 // ---- Supernova brand colors, from docs/DESIGN.md ----
 const COLORS = {
@@ -89,6 +89,20 @@ function NotifyScreen({ onNext }) {
 }
 
 function HomeScreen({ onQuiz, streak }) {
+  // Simple animated fact card: the emoji spins slowly instead of using a real video.
+  const spin = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(spin, {
+        toValue: 1,
+        duration: 9000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, []);
+  const rotate = spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={{ padding: 20 }}>
       <View style={styles.headerRow}>
@@ -100,9 +114,9 @@ function HomeScreen({ onQuiz, streak }) {
 
       <Pressable style={styles.lessonCard} onPress={onQuiz}>
         <View style={styles.lessonImage}>
-          <Text style={{ fontSize: 40 }}>🪐</Text>
+          <Animated.Text style={{ fontSize: 40, transform: [{ rotate }] }}>🪐</Animated.Text>
         </View>
-        <Text style={styles.lessonLabel}>Today's lesson</Text>
+        <Text style={styles.lessonLabel}>Today's fact card</Text>
         <Text style={styles.lessonTitle}>Why Saturn's rings are slowly disappearing</Text>
       </Pressable>
 
@@ -119,6 +133,7 @@ const QUESTION = {
   prompt: "What are Saturn's rings mostly made of?",
   options: ['Ice and rock', 'Solid metal', 'Liquid gas', 'Sand'],
   correct: 0,
+  explanation: "Saturn's rings are countless chunks of ice and rock, some as small as sand, some as big as a house.",
 };
 
 function TriviaScreen({ onDone, onBack }) {
@@ -152,9 +167,14 @@ function TriviaScreen({ onDone, onBack }) {
         })}
 
         {selected !== null && (
-          <Pressable style={styles.primaryButton} onPress={onDone}>
-            <Text style={styles.primaryButtonText}>Continue</Text>
-          </Pressable>
+          <>
+            <View style={styles.explanationBox}>
+              <Text style={styles.explanationText}>💡 {QUESTION.explanation}</Text>
+            </View>
+            <Pressable style={styles.primaryButton} onPress={onDone}>
+              <Text style={styles.primaryButtonText}>Continue</Text>
+            </Pressable>
+          </>
         )}
       </View>
     </View>
@@ -260,6 +280,8 @@ const styles = StyleSheet.create({
   optionText: { color: COLORS.white, fontSize: 15 },
   optionCorrect: { backgroundColor: 'rgba(76,175,80,0.25)', borderColor: '#4CAF50', borderWidth: 1 },
   optionWrong: { backgroundColor: 'rgba(244,67,54,0.2)', borderColor: '#F44336', borderWidth: 1 },
+  explanationBox: { backgroundColor: 'rgba(233,228,166,0.1)', borderRadius: 14, padding: 14, marginTop: 4, marginBottom: 12 },
+  explanationText: { color: COLORS.pale, fontSize: 13, lineHeight: 19 },
 
   flameCircle: { width: 140, height: 140, borderRadius: 70, borderWidth: 4, borderColor: 'rgba(217,119,6,0.3)', backgroundColor: 'rgba(217,119,6,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
   streakNumber: { fontSize: 34, fontWeight: 'bold', color: COLORS.white, marginBottom: 4 },

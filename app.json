@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Supernova",
+    "slug": "supernova-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0F1A",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#0A0F1A"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.adtaniedu.supernova"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

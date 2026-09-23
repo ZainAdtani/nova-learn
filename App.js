@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { View } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles } from './styles/appStyles';
 import { supabase } from './lib/supabase';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -20,19 +21,22 @@ import { SettingsScreen } from './screens/SettingsScreen';
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <PremiumProvider>
-          <AppContent />
-        </PremiumProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <PremiumProvider>
+            <AppContent />
+          </PremiumProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 
 function AppContent() {
   const styles = useStyles();
   const { scheme } = useTheme();
+  const insets = useSafeAreaInsets();
   const [screen, setScreen] = useState('welcome');
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const { streak, completeQuiz, claimGuestStreak } = useStreak();
@@ -54,7 +58,7 @@ function AppContent() {
   return (
     <View style={styles.app}>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <View style={styles.screenArea}>
+      <View style={[styles.screenArea, { paddingTop: insets.top }]}>
         {screen === 'welcome' && <WelcomeScreen onNext={() => setScreen('notify')} />}
         {screen === 'notify' && <NotifyScreen onNext={() => setScreen('home')} />}
         {screen === 'home' && (
@@ -87,7 +91,7 @@ function AppContent() {
       </View>
 
       {!isOnboarding && (
-        <View style={styles.nav}>
+        <View style={[styles.nav, { paddingBottom: Math.max(insets.bottom, 12) + 12 }]}>
           <NavButton label="Home" emoji="🏠" active={screen === 'home'} onPress={() => setScreen('home')} />
           <NavButton label="Quiz" emoji="⚡" active={screen === 'trivia'} onPress={() => setScreen('trivia')} />
           <NavButton label="Streak" emoji="🔥" active={screen === 'streak'} onPress={() => setScreen('streak')} />

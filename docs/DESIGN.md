@@ -1,4 +1,4 @@
-# Supernova brand
+# Nova Learn brand
 
 ## Colors
 

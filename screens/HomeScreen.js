@@ -2,8 +2,9 @@ import { useRef, useEffect } from 'react';
 import { Text, View, Pressable, ScrollView, Animated, Easing } from 'react-native';
 import { useStyles } from '../styles/appStyles';
 import { getTodayLesson, getTomorrowLesson } from '../lib/lessons';
+import { LESSONS } from '../constants/lessons';
 
-export function HomeScreen({ onQuiz, streak }) {
+export function HomeScreen({ onQuiz, streak, isPremium, onUpgrade, onLibrary }) {
   const styles = useStyles();
   const today = getTodayLesson();
   const tomorrow = getTomorrowLesson();
@@ -44,6 +45,19 @@ export function HomeScreen({ onQuiz, streak }) {
         <Text style={{ fontSize: 28 }}>{tomorrow.emoji}</Text>
         <Text style={styles.upcomingText}>{tomorrow.teaser}</Text>
       </View>
+
+      <Text style={styles.sectionLabel}>Library</Text>
+      {isPremium ? (
+        <Pressable style={styles.upcomingCard} onPress={onLibrary}>
+          <Text style={{ fontSize: 28 }}>📚</Text>
+          <Text style={styles.upcomingText}>Browse all {LESSONS.length} lessons</Text>
+        </Pressable>
+      ) : (
+        <Pressable style={styles.upcomingCard} onPress={onUpgrade}>
+          <Text style={{ fontSize: 28 }}>🔒</Text>
+          <Text style={styles.upcomingText}>👑 Unlock the full lesson library</Text>
+        </Pressable>
+      )}
     </ScrollView>
   );
 }

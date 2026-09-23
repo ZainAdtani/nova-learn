@@ -29,7 +29,7 @@ export function WelcomeScreen({ onNext }) {
       {scheme === 'dark' && <Starfield />}
       <View style={styles.center}>
         <Animated.Text style={[styles.logo, { transform: [{ scale }] }]}>✨</Animated.Text>
-        <Text style={styles.h1}>NovaLearn</Text>
+        <Text style={styles.h1}>Nova Learn</Text>
         <Text style={styles.tagline}>Tiny lessons, big universe.</Text>
         <Pressable style={styles.primaryButton} onPress={onNext}>
           <Text style={styles.primaryButtonText}>Get Started</Text>

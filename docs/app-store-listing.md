@@ -36,7 +36,7 @@ Primary: Education
 Secondary: Reference (or Lifestyle)
 
 ## Support URL
-https://zainadtani.github.io/supernova-app/support.html
+https://zainadtani.github.io/nova-learn/support.html
 
 ## Marketing URL (optional)
 (optional, can leave blank for now)

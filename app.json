@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "NovaLearn",
-    "slug": "supernova-app",
+    "name": "Nova Learn",
+    "slug": "nova-learn",
     "version": "0.1.0",
-    "scheme": "supernova",
+    "scheme": "novalearn",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#0A0F1A",
@@ -26,7 +26,8 @@
     ],
     "plugins": [
       "expo-asset",
-      "expo-iap"
+      "expo-iap",
+      "expo-notifications"
     ],
     "extra": {
       "eas": {

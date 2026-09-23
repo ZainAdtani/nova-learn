@@ -18,7 +18,7 @@ A daily science learning app for iOS. Astronomy, chemistry, evolution, and every
 Built with [Expo](https://expo.dev) (a tool for building iPhone apps with React Native) and [Supabase](https://supabase.com) (accounts + streak storage).
 
 ```
-supernova-app/
+nova-learn/
 ├── App.js              # top-level screen switcher
 ├── app.json             # app name, icon, and Expo settings
 ├── eas.json              # cloud build profiles (simulator, preview, production)

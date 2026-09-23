@@ -2,8 +2,8 @@ import { Text, View, Pressable, ActivityIndicator, Linking } from 'react-native'
 import { useStyles } from '../styles/appStyles';
 import { usePremium } from '../context/PremiumContext';
 
-const PRIVACY_POLICY_URL = 'https://zainadtani.github.io/supernova-app/privacy-policy.html';
-const TERMS_OF_USE_URL = 'https://zainadtani.github.io/supernova-app/terms-of-use.html';
+const PRIVACY_POLICY_URL = 'https://zainadtani.github.io/nova-learn/privacy-policy.html';
+const TERMS_OF_USE_URL = 'https://zainadtani.github.io/nova-learn/terms-of-use.html';
 
 export function PaywallScreen({ onClose }) {
   const styles = useStyles();

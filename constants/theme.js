@@ -1,6 +1,6 @@
-// Supernova brand colors, from docs/DESIGN.md.
+// Nova Learn brand colors, from docs/DESIGN.md.
 // Accent colors (blue, fire, sunset) stay the same in both modes so the
-// brand still feels like Supernova either way. Background and text swap.
+// brand still feels like Nova Learn either way. Background and text swap.
 
 export const DARK_COLORS = {
   bg: '#0A0F1A',

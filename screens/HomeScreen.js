@@ -26,7 +26,7 @@ export function HomeScreen({ onQuiz, streak, isPremium, onUpgrade, onLibrary }) 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={{ padding: 20 }}>
       <View style={styles.headerRow}>
-        <Text style={styles.h1Small}>NovaLearn</Text>
+        <Text style={styles.h1Small}>Nova Learn</Text>
         <View style={styles.streakPill}>
           <Text style={styles.streakPillText}>🔥 {streak}</Text>
         </View>

@@ -2,7 +2,7 @@
 
 *Draft. This needs to be hosted at a public URL (e.g. a GitHub Pages page) before it can be submitted to App Store Connect, since Apple requires a live link, not just a file in the repo.*
 
-**Last updated:** [fill in date before publishing]
+**Last updated:** September 17, 2026
 
 ## What we collect
 
@@ -25,7 +25,7 @@ Signed-in account data is stored with Supabase, our backend provider. It is prot
 
 ## Your choices
 
-You can use the entire app without ever signing in. If you've signed in and want your account and data deleted, contact us at [support email] and we'll remove it.
+You can use the entire app without ever signing in. If you've signed in and want your account and data deleted, contact us at zkadtani@gmail.com and we'll remove it.
 
 ## Changes to this policy
 
@@ -33,4 +33,4 @@ If this policy changes, we'll update the date at the top of this page.
 
 ## Contact
 
-Questions about this policy: [support email]
+Questions about this policy: zkadtani@gmail.com

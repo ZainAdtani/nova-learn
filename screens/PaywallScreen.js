@@ -3,6 +3,7 @@ import { useStyles } from '../styles/appStyles';
 import { usePremium } from '../context/PremiumContext';
 
 const PRIVACY_POLICY_URL = 'https://zainadtani.github.io/supernova-app/privacy-policy.html';
+const TERMS_OF_USE_URL = 'https://zainadtani.github.io/supernova-app/terms-of-use.html';
 
 export function PaywallScreen({ onClose }) {
   const styles = useStyles();
@@ -35,6 +36,10 @@ export function PaywallScreen({ onClose }) {
 
   const openPrivacyPolicy = () => {
     Linking.openURL(PRIVACY_POLICY_URL).catch(() => {});
+  };
+
+  const openTermsOfUse = () => {
+    Linking.openURL(TERMS_OF_USE_URL).catch(() => {});
   };
 
   return (
@@ -106,6 +111,9 @@ export function PaywallScreen({ onClose }) {
             </Text>
             <Pressable style={styles.textButton} onPress={openPrivacyPolicy}>
               <Text style={styles.textButtonLabel}>Privacy Policy</Text>
+            </Pressable>
+            <Pressable style={styles.textButton} onPress={openTermsOfUse}>
+              <Text style={styles.textButtonLabel}>Terms of Use</Text>
             </Pressable>
             <Pressable style={styles.textButton} onPress={onClose}>
               <Text style={styles.textButtonLabel}>Maybe later</Text>

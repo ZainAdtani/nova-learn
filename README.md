@@ -1,6 +1,6 @@
-# Supernova
+# Nova Learn
 
-**Supernova. Tiny lessons, big universe.**
+**Nova Learn. Tiny lessons, big universe.**
 
 A daily science learning app for iOS. Astronomy, chemistry, evolution, and everything in between, taught in about 30 seconds a day.
 
@@ -11,7 +11,7 @@ A daily science learning app for iOS. Astronomy, chemistry, evolution, and every
 - **The daily habit:** a quick fact plus a one-question quiz, one lesson per day.
 - **Game layer:** streaks only. No badges, no leaderboards, no clutter.
 - **Accounts:** guest mode by default. Sign in with just an email (a 6-digit code, no password) to save your streak permanently.
-- **Money:** free to start. A $2.99/month premium tier is planned, not live yet.
+- **Money:** free to start. A $2.99/month premium tier (Nova Learn Premium) unlocks the full lesson library.
 
 ## What's in this repo
 
@@ -22,9 +22,9 @@ supernova-app/
 ├── App.js              # top-level screen switcher
 ├── app.json             # app name, icon, and Expo settings
 ├── eas.json              # cloud build profiles (simulator, preview, production)
-├── screens/               # one file per screen (Welcome, Home, Trivia, Streak, Paywall, Settings...)
+├── screens/               # one file per screen (Welcome, Home, Trivia, Streak, Library, Paywall, Settings...)
 ├── components/            # shared UI pieces (nav bar, sign-in popup)
-├── context/                # app-wide state (auth session, light/dark theme)
+├── context/                # app-wide state (auth session, light/dark theme, premium subscription)
 ├── hooks/                   # useStreak, the streak-tracking logic
 ├── lib/                      # Supabase client, daily lesson picker
 ├── constants/                 # brand colors, the lesson/question bank
@@ -32,7 +32,9 @@ supernova-app/
 ├── docs/
 │   ├── DESIGN.md                # brand colors and fonts
 │   ├── app-store-listing.md      # draft App Store Connect copy
-│   └── privacy-policy.html        # the live privacy policy page
+│   ├── privacy-policy.html        # the live privacy policy page
+│   ├── support.html               # the live support page
+│   └── terms-of-use.html          # the live terms of use page
 └── assets/                          # icons and images
 ```
 

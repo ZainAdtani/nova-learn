@@ -1,9 +1,9 @@
-# App Store Listing — Supernova
+# App Store Listing — Nova Learn
 
 Draft copy for App Store Connect. Review and edit before submitting, then paste into the matching fields.
 
 ## App name
-Supernova
+Nova Learn
 
 ## Subtitle (30 characters max)
 Tiny daily science lessons
@@ -13,7 +13,7 @@ One science fact a day, about 30 seconds. Build a streak, learn something real, 
 
 ## Description
 
-Supernova teaches you one science fact a day, in about 30 seconds.
+Nova Learn teaches you one science fact a day, in about 30 seconds.
 
 Astronomy, chemistry, evolution, physics, and more, one bite-sized lesson at a time. Read a quick fact, answer one question, and keep your streak going.
 
@@ -36,7 +36,7 @@ Primary: Education
 Secondary: Reference (or Lifestyle)
 
 ## Support URL
-(needs a real page, can be as simple as a GitHub Pages page or a single page on your site)
+https://zainadtani.github.io/supernova-app/support.html
 
 ## Marketing URL (optional)
 (optional, can leave blank for now)

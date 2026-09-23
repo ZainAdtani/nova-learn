@@ -8,7 +8,7 @@ export function StreakScreen({ streak, isPremium, onUpgrade }) {
       <View style={styles.flameCircle}>
         <Text style={{ fontSize: 56 }}>🔥</Text>
       </View>
-      <Text style={styles.streakNumber}>{streak} days</Text>
+      <Text style={styles.streakNumber}>{streak} {streak === 1 ? 'day' : 'days'}</Text>
       <Text style={styles.body}>Keep it going. One tiny lesson a day.</Text>
       {isPremium ? (
         <Text style={styles.body}>👑 Premium active</Text>

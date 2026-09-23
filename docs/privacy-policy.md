@@ -1,4 +1,4 @@
-# Privacy Policy — Supernova
+# Privacy Policy — Nova Learn
 
 *Draft. This needs to be hosted at a public URL (e.g. a GitHub Pages page) before it can be submitted to App Store Connect, since Apple requires a live link, not just a file in the repo.*
 
@@ -6,7 +6,7 @@
 
 ## What we collect
 
-**If you use Supernova as a guest**, we don't collect anything. Your streak is saved only on your own device.
+**If you use Nova Learn as a guest**, we don't collect anything. Your streak is saved only on your own device.
 
 **If you choose to sign in**, we collect:
 - Your email address, used only to sign you in (we send a one-time code, there's no password)

@@ -5,6 +5,7 @@ import { useStyles } from './styles/appStyles';
 import { supabase } from './lib/supabase';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { PremiumProvider, usePremium } from './context/PremiumContext';
 import { useStreak } from './hooks/useStreak';
 import { NavButton } from './components/NavButton';
 import { SaveStreakPrompt } from './components/SaveStreakPrompt';
@@ -13,6 +14,7 @@ import { NotifyScreen } from './screens/NotifyScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { TriviaScreen } from './screens/TriviaScreen';
 import { StreakScreen } from './screens/StreakScreen';
+import { LibraryScreen } from './screens/LibraryScreen';
 import { PaywallScreen } from './screens/PaywallScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 
@@ -20,7 +22,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppContent />
+        <PremiumProvider>
+          <AppContent />
+        </PremiumProvider>
       </AuthProvider>
     </ThemeProvider>
   );
@@ -32,6 +36,7 @@ function AppContent() {
   const [screen, setScreen] = useState('welcome');
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const { streak, completeQuiz, claimGuestStreak } = useStreak();
+  const { isPremium } = usePremium();
   const isOnboarding = screen === 'welcome' || screen === 'notify';
 
   const handleQuizDone = async () => {
@@ -52,11 +57,31 @@ function AppContent() {
       <View style={styles.screenArea}>
         {screen === 'welcome' && <WelcomeScreen onNext={() => setScreen('notify')} />}
         {screen === 'notify' && <NotifyScreen onNext={() => setScreen('home')} />}
-        {screen === 'home' && <HomeScreen onQuiz={() => setScreen('trivia')} streak={streak} />}
+        {screen === 'home' && (
+          <HomeScreen
+            onQuiz={() => setScreen('trivia')}
+            streak={streak}
+            isPremium={isPremium}
+            onUpgrade={() => setScreen('paywall')}
+            onLibrary={() => setScreen('library')}
+          />
+        )}
         {screen === 'trivia' && (
           <TriviaScreen onDone={handleQuizDone} onBack={() => setScreen('home')} />
         )}
-        {screen === 'streak' && <StreakScreen streak={streak} onUpgrade={() => setScreen('paywall')} />}
+        {screen === 'streak' && (
+          <StreakScreen
+            streak={streak}
+            isPremium={isPremium}
+            onUpgrade={() => setScreen('paywall')}
+          />
+        )}
+        {screen === 'library' && (
+          <LibraryScreen
+            onBack={() => setScreen('home')}
+            onUpgrade={() => setScreen('paywall')}
+          />
+        )}
         {screen === 'paywall' && <PaywallScreen onClose={() => setScreen('home')} />}
         {screen === 'settings' && <SettingsScreen onRequestSignIn={() => setShowSavePrompt(true)} />}
       </View>

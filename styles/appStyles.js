@@ -70,6 +70,8 @@ export function getStyles(colors) {
 
     sectionLabel: { color: colors.muted, fontSize: 12, fontWeight: 'bold', marginBottom: 10, textTransform: 'uppercase' },
     upcomingCard: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 16, padding: 14 },
+    upcomingCardStacked: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 16, padding: 14, marginBottom: 10 },
+    upcomingDay: { color: colors.muted, fontSize: 11, fontWeight: 'bold', width: 44 },
     upcomingText: { color: colors.text, fontSize: 14, flexShrink: 1 },
 
     backLink: { color: colors.muted, marginBottom: 12 },

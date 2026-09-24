@@ -1,13 +1,15 @@
 import { useRef, useEffect } from 'react';
 import { Text, View, Pressable, ScrollView, Animated, Easing } from 'react-native';
 import { useStyles } from '../styles/appStyles';
-import { getTodayLesson, getTomorrowLesson } from '../lib/lessons';
+import { getTodayLesson, getUpcomingLessons } from '../lib/lessons';
 import { LESSONS } from '../constants/lessons';
+
+const DAY_LABELS = ['Tomorrow', 'In 2 days', 'In 3 days'];
 
 export function HomeScreen({ onQuiz, streak, isPremium, onUpgrade, onLibrary }) {
   const styles = useStyles();
   const today = getTodayLesson();
-  const tomorrow = getTomorrowLesson();
+  const upcoming = getUpcomingLessons(3);
 
   // Simple animated fact card: the emoji spins slowly instead of using a real video.
   const spin = useRef(new Animated.Value(0)).current;
@@ -41,10 +43,13 @@ export function HomeScreen({ onQuiz, streak, isPremium, onUpgrade, onLibrary }) 
       </Pressable>
 
       <Text style={styles.sectionLabel}>Coming up</Text>
-      <View style={styles.upcomingCard}>
-        <Text style={{ fontSize: 28 }}>{tomorrow.emoji}</Text>
-        <Text style={styles.upcomingText}>{tomorrow.teaser}</Text>
-      </View>
+      {upcoming.map((lesson, i) => (
+        <View style={styles.upcomingCardStacked} key={lesson.teaser}>
+          <Text style={styles.upcomingDay}>{DAY_LABELS[i]}</Text>
+          <Text style={{ fontSize: 28 }}>{lesson.emoji}</Text>
+          <Text style={styles.upcomingText}>{lesson.teaser}</Text>
+        </View>
+      ))}
 
       <Text style={styles.sectionLabel}>Library</Text>
       {isPremium ? (

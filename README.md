@@ -10,7 +10,7 @@ A daily science learning app for iOS. Astronomy, chemistry, evolution, and every
 - **What it teaches:** general science, one bite at a time.
 - **The daily habit:** a quick fact plus a one-question quiz, one lesson per day.
 - **Game layer:** streaks only. No badges, no leaderboards, no clutter.
-- **Accounts:** guest mode by default. Sign in with just an email (a 6-digit code, no password) to save your streak permanently.
+- **Accounts:** none. No sign in, no email. Your streak is saved on this phone only.
 - **Money:** free to start. A $2.99/month premium tier (Nova Learn Premium) unlocks the full lesson library.
 
 ## What's in this repo

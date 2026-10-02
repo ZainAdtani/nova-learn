@@ -1,9 +1,6 @@
-import { useState } from 'react';
-import { Text, View, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 import { useStyles } from '../styles/appStyles';
 import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
 
 const APPEARANCE_OPTIONS = [
   { value: 'system', label: 'System' },
@@ -11,84 +8,20 @@ const APPEARANCE_OPTIONS = [
   { value: 'dark', label: 'Dark' },
 ];
 
-export function SettingsScreen({ onRequestSignIn }) {
+export function SettingsScreen() {
   const styles = useStyles();
   const { preference, setPreference } = useTheme();
-  const { session } = useAuth();
-  const [deleting, setDeleting] = useState(false);
-
-  const handleSignOut = () => {
-    Alert.alert('Sign out?', 'You can always sign back in with the same email.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign Out', style: 'destructive', onPress: () => supabase.auth.signOut() },
-    ]);
-  };
-
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete your account?',
-      "This permanently deletes your account and your streak. There's no undoing this.",
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete Account',
-          style: 'destructive',
-          onPress: async () => {
-            setDeleting(true);
-            const { error } = await supabase.functions.invoke('delete-account');
-            setDeleting(false);
-            if (error) {
-              Alert.alert(
-                "Couldn't delete your account",
-                'Something went wrong. Please try again, or email zkadtani@gmail.com for help.'
-              );
-              return;
-            }
-            await supabase.auth.signOut();
-          },
-        },
-      ]
-    );
-  };
 
   return (
     <View style={[styles.screen, { padding: 20 }]}>
       <Text style={[styles.h1Small, { marginBottom: 24 }]}>Settings</Text>
 
       <View style={styles.settingsSection}>
-        <Text style={styles.settingsSectionLabel}>Account</Text>
-        {session ? (
-          <>
-            <View style={styles.settingsRow}>
-              <Text style={styles.settingsRowLabel}>Signed in</Text>
-              <Text style={styles.settingsRowValue}>{session.user.email}</Text>
-            </View>
-            <Pressable style={styles.dangerButton} onPress={handleSignOut}>
-              <Text style={styles.dangerButtonText}>Sign Out</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.dangerButton, { marginTop: 8, opacity: deleting ? 0.6 : 1 }]}
-              onPress={handleDeleteAccount}
-              disabled={deleting}
-            >
-              {deleting ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.dangerButtonText}>Delete Account</Text>
-              )}
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <View style={styles.settingsRow}>
-              <Text style={styles.settingsRowLabel}>You're a guest</Text>
-              <Text style={styles.settingsRowValue}>Not signed in</Text>
-            </View>
-            <Pressable style={styles.primaryButton} onPress={onRequestSignIn}>
-              <Text style={styles.primaryButtonText}>Save your streak</Text>
-            </Pressable>
-          </>
-        )}
+        <Text style={styles.settingsSectionLabel}>Your streak</Text>
+        <View style={styles.settingsRow}>
+          <Text style={styles.settingsRowLabel}>Saved on this phone</Text>
+          <Text style={styles.settingsRowValue}>No account needed</Text>
+        </View>
       </View>
 
       <View style={styles.settingsSection}>

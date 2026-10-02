@@ -3,13 +3,10 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles } from './styles/appStyles';
-import { supabase } from './lib/supabase';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
-import { AuthProvider } from './context/AuthContext';
 import { PremiumProvider, usePremium } from './context/PremiumContext';
 import { useStreak } from './hooks/useStreak';
 import { NavButton } from './components/NavButton';
-import { SaveStreakPrompt } from './components/SaveStreakPrompt';
 import { WelcomeScreen } from './screens/WelcomeScreen';
 import { NotifyScreen } from './screens/NotifyScreen';
 import { HomeScreen } from './screens/HomeScreen';
@@ -23,11 +20,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <AuthProvider>
-          <PremiumProvider>
-            <AppContent />
-          </PremiumProvider>
-        </AuthProvider>
+        <PremiumProvider>
+          <AppContent />
+        </PremiumProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
@@ -38,21 +33,13 @@ function AppContent() {
   const { scheme } = useTheme();
   const insets = useSafeAreaInsets();
   const [screen, setScreen] = useState('welcome');
-  const [showSavePrompt, setShowSavePrompt] = useState(false);
-  const { streak, completeQuiz, claimGuestStreak } = useStreak();
+  const { streak, completeQuiz } = useStreak();
   const { isPremium } = usePremium();
   const isOnboarding = screen === 'welcome' || screen === 'notify';
 
   const handleQuizDone = async () => {
-    const isFirstGuestQuiz = await completeQuiz();
+    await completeQuiz();
     setScreen('streak');
-    if (isFirstGuestQuiz) setShowSavePrompt(true);
-  };
-
-  const handleSignedIn = async () => {
-    const { data } = await supabase.auth.getSession();
-    if (data.session) await claimGuestStreak(data.session.user.id);
-    setShowSavePrompt(false);
   };
 
   return (
@@ -87,7 +74,7 @@ function AppContent() {
           />
         )}
         {screen === 'paywall' && <PaywallScreen onClose={() => setScreen('home')} />}
-        {screen === 'settings' && <SettingsScreen onRequestSignIn={() => setShowSavePrompt(true)} />}
+        {screen === 'settings' && <SettingsScreen />}
       </View>
 
       {!isOnboarding && (
@@ -100,11 +87,6 @@ function AppContent() {
         </View>
       )}
 
-      <SaveStreakPrompt
-        visible={showSavePrompt}
-        onDismiss={() => setShowSavePrompt(false)}
-        onSignedIn={handleSignedIn}
-      />
     </View>
   );
 }
